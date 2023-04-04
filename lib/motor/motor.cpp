@@ -63,47 +63,66 @@ void Motor::Reset()
 
 void Motor::RealtimeCyclic()
 {
+    int32_t leftMotorSpeed = (int32_t)forwardComp - (int32_t)backComp + (int32_t)rightComp - (int32_t)leftComp;
+    int32_t rightMotorSpeed = (int32_t)forwardComp - (int32_t)backComp - (int32_t)rightComp + (int32_t)leftComp;
 
+    if (leftMotorSpeed > 100) {
+        int32_t temp = leftMotorSpeed - 100;
+        leftMotorSpeed = 100;
+        rightMotorSpeed -= temp;
+    }
+    if (leftMotorSpeed < -100) {
+        int32_t temp = -100 - leftMotorSpeed;
+        leftMotorSpeed = -100;
+        rightMotorSpeed += temp;
+    }
+    if (rightMotorSpeed > 100) {
+        int32_t temp = rightMotorSpeed - 100;
+        rightMotorSpeed = 100;
+        leftMotorSpeed -= temp;
+    }
+    if (rightMotorSpeed < -100) {
+        int32_t temp = -100 - rightMotorSpeed;
+        rightMotorSpeed = -100;
+        leftMotorSpeed += temp;
+    }
+
+    if (enable) {
+        digitalWrite(PIN_MOTOR_STBY, HIGH);
+    } else {
+        digitalWrite(PIN_MOTOR_STBY, LOW);
+        return;
+    }
+
+    if (leftMotorSpeed > 0) {
+        digitalWrite(PIN_MOTOR_BIN1, LOW);
+        digitalWrite(PIN_MOTOR_BIN2, HIGH);
+    } else if (leftMotorSpeed < 0) {
+        digitalWrite(PIN_MOTOR_BIN1, HIGH);
+        digitalWrite(PIN_MOTOR_BIN2, LOW);
+    } else {
+        digitalWrite(PIN_MOTOR_BIN1, LOW);
+        digitalWrite(PIN_MOTOR_BIN2, LOW);
+    }
+
+    if (rightMotorSpeed > 0) {
+        digitalWrite(PIN_MOTOR_AIN1, LOW);
+        digitalWrite(PIN_MOTOR_AIN2, HIGH);
+    } else if (rightMotorSpeed < 0) {
+        digitalWrite(PIN_MOTOR_AIN1, HIGH);
+        digitalWrite(PIN_MOTOR_AIN2, LOW);
+    } else {
+        digitalWrite(PIN_MOTOR_AIN1, LOW);
+        digitalWrite(PIN_MOTOR_AIN2, LOW);
+    }
+
+    uint32_t leftMotorPwm = abs(leftMotorSpeed) * 255 / 100;
+    uint32_t rightMotorPwm = abs(rightMotorSpeed) * 255 / 100;
+    ledcWrite(PWMB_CHANNEL, leftMotorPwm);
+    ledcWrite(PWMA_CHANNEL, rightMotorPwm);
 }
 
 void Motor::NormalCyclic()
 {
 
 }
-
-
-    // // forward
-    // digitalWrite(MOTOR_AIN1, HIGH);
-    // digitalWrite(MOTOR_AIN2, LOW);
-    // digitalWrite(MOTOR_BIN1, LOW);
-    // digitalWrite(MOTOR_BIN2, HIGH);
-    // ledcWrite(PWM_CHANNEL0, 512);
-    // ledcWrite(PWM_CHANNEL1, 512);
-    // delay(2000);
-
-    // // hold
-    // digitalWrite(MOTOR_AIN1, LOW);
-    // digitalWrite(MOTOR_AIN2, LOW);
-    // digitalWrite(MOTOR_BIN1, LOW);
-    // digitalWrite(MOTOR_BIN2, LOW);
-    // ledcWrite(PWM_CHANNEL0, 0);
-    // ledcWrite(PWM_CHANNEL1, 0);
-    // delay(2000);
-
-    // // back
-    // digitalWrite(MOTOR_AIN1, LOW);
-    // digitalWrite(MOTOR_AIN2, HIGH);
-    // digitalWrite(MOTOR_BIN1, HIGH);
-    // digitalWrite(MOTOR_BIN2, LOW);
-    // ledcWrite(PWM_CHANNEL0, 512);
-    // ledcWrite(PWM_CHANNEL1, 512);
-    // delay(2000);
-
-    // // hold
-    // digitalWrite(MOTOR_AIN1, LOW);
-    // digitalWrite(MOTOR_AIN2, LOW);
-    // digitalWrite(MOTOR_BIN1, LOW);
-    // digitalWrite(MOTOR_BIN2, LOW);
-    // ledcWrite(PWM_CHANNEL0, 0);
-    // ledcWrite(PWM_CHANNEL1, 0);
-    // delay(2000);
