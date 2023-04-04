@@ -8,6 +8,7 @@ class Device
 public:
     virtual void Create(ParamManager* pm) = 0;
     virtual void Init() = 0;
+    virtual void Reset() = 0;
     virtual void RealtimeCyclic() = 0;
     virtual void NormalCyclic() = 0;
 
