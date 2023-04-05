@@ -5,8 +5,13 @@
 #include <vector>
 #include "string_utils.h"
 
-WiFiUDP udp;
 
+IPAddress localIp(192, 168, 2, 50);
+IPAddress gatewayIp(192, 168, 2, 1);
+IPAddress subnet(255, 255, 255, 0);
+IPAddress primaryDns(223, 5, 5, 5);
+IPAddress secondaryDns(8, 8, 4, 4);
+WiFiUDP udp;
 
 
 void WifiConnection::Create(ParamManager* pm)
@@ -19,6 +24,7 @@ void WifiConnection::Create(ParamManager* pm)
 
 void WifiConnection::Init()
 {
+    WiFi.config(localIp, gatewayIp, subnet, primaryDns, secondaryDns);
     WiFi.begin("VVAILL", "channy161021");
 }
 

@@ -63,8 +63,16 @@ void Motor::Reset()
 
 void Motor::RealtimeCyclic()
 {
-    int32_t leftMotorSpeed = (int32_t)forwardComp - (int32_t)backComp + (int32_t)rightComp - (int32_t)leftComp;
-    int32_t rightMotorSpeed = (int32_t)forwardComp - (int32_t)backComp - (int32_t)rightComp + (int32_t)leftComp;
+    int32_t leftMotorSpeed;
+    int32_t rightMotorSpeed;
+
+    if (forwardComp >= backComp) {
+        leftMotorSpeed = (int32_t)forwardComp - (int32_t)backComp + (int32_t)rightComp - (int32_t)leftComp;
+        rightMotorSpeed = (int32_t)forwardComp - (int32_t)backComp - (int32_t)rightComp + (int32_t)leftComp;
+    } else {
+        leftMotorSpeed = (int32_t)forwardComp - (int32_t)backComp - (int32_t)rightComp + (int32_t)leftComp;
+        rightMotorSpeed = (int32_t)forwardComp - (int32_t)backComp + (int32_t)rightComp - (int32_t)leftComp;
+    }
 
     if (leftMotorSpeed > 100) {
         int32_t temp = leftMotorSpeed - 100;

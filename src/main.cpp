@@ -27,8 +27,6 @@ void setup()
     core.AddDevice(&beep);
     core.InitDevices();
 
-    Serial.println("here 1");
-
     xTaskCreate(
         RealtimeTask,
         "Realtime Task",
@@ -37,14 +35,12 @@ void setup()
         configMAX_PRIORITIES - 1,
         NULL
     );
-
-    Serial.println("here 2");
 }
 
 void loop()
 {
     core.NormalCyclic();
-    delay(10);
+    delay(NORMAL_CYCLE_MS);
 }
 
 void RealtimeTask(void* p)
