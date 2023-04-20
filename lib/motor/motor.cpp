@@ -63,6 +63,13 @@ void Motor::Reset()
 
 void Motor::RealtimeCyclic()
 {
+    if (enable) {
+        digitalWrite(PIN_MOTOR_STBY, HIGH);
+    } else {
+        digitalWrite(PIN_MOTOR_STBY, LOW);
+        return;
+    }
+
     int32_t leftMotorSpeed;
     int32_t rightMotorSpeed;
 
@@ -95,13 +102,6 @@ void Motor::RealtimeCyclic()
         leftMotorSpeed += temp;
     }
 
-    if (enable) {
-        digitalWrite(PIN_MOTOR_STBY, HIGH);
-    } else {
-        digitalWrite(PIN_MOTOR_STBY, LOW);
-        return;
-    }
-
     if (leftMotorSpeed > 0) {
         digitalWrite(PIN_MOTOR_BIN1, LOW);
         digitalWrite(PIN_MOTOR_BIN2, HIGH);
@@ -126,6 +126,8 @@ void Motor::RealtimeCyclic()
 
     uint32_t leftMotorPwm = abs(leftMotorSpeed) * 255 / 100;
     uint32_t rightMotorPwm = abs(rightMotorSpeed) * 255 / 100;
+    leftMotorPwm = leftMotorPwm * velocity / 100;
+    rightMotorSpeed = rightMotorSpeed * velocity / 100;
     ledcWrite(PWMB_CHANNEL, leftMotorPwm);
     ledcWrite(PWMA_CHANNEL, rightMotorPwm);
 }
