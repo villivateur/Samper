@@ -21,3 +21,5 @@
 #define PIN_MOTOR_E2A 19
 #define PIN_MOTOR_E2B 23
 #define PIN_BAT_ADC 36
+
+#define PIN_HEADLIGHT PIN_FUNC0

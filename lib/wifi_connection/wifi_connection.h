@@ -18,6 +18,7 @@ public:
 private:
     void ParsePackage(char* package, int len);
     void ParseLine(std::string line);
-    uint8_t preConnectionStatus;
+
+    uint8_t enable;
     uint8_t udpListening;
 };

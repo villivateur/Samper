@@ -127,7 +127,7 @@ void Motor::RealtimeCyclic()
     uint32_t leftMotorPwm = abs(leftMotorSpeed) * 255 / 100;
     uint32_t rightMotorPwm = abs(rightMotorSpeed) * 255 / 100;
     leftMotorPwm = leftMotorPwm * velocity / 100;
-    rightMotorSpeed = rightMotorSpeed * velocity / 100;
+    rightMotorPwm = rightMotorPwm * velocity / 100;
     ledcWrite(PWMB_CHANNEL, leftMotorPwm);
     ledcWrite(PWMA_CHANNEL, rightMotorPwm);
 }

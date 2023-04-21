@@ -6,6 +6,7 @@
 #include "status_led.h"
 #include "wifi_connection.h"
 #include "beep.h"
+#include "headlight.h"
 
 
 Core core;
@@ -13,6 +14,8 @@ Motor motor;
 WifiConnection network;
 StatusLed statusLed;
 Beep beep;
+Headlight headlight;
+
 
 void RealtimeTask(void* p);
 
@@ -25,7 +28,15 @@ void setup()
     core.AddDevice(&motor);
     core.AddDevice(&statusLed);
     core.AddDevice(&beep);
+    core.AddDevice(&headlight);
     core.InitDevices();
+
+    for (uint32_t i = 0; i < 10; i++) {
+        beep.BeepOn();
+        delay(50);
+        beep.BeepOff();
+        delay(50);
+    }
 
     xTaskCreate(
         RealtimeTask,

@@ -31,9 +31,6 @@ void Beep::Reset()
 
 void Beep::RealtimeCyclic()
 {
-    // Serial.print(frequecy);
-    // Serial.print(";");
-    // Serial.println(duty);
     if (frequecy == 0) {
         return;
     }
@@ -61,4 +58,14 @@ void Beep::RealtimeCyclic()
 void Beep::NormalCyclic()
 {
 
+}
+
+void Beep::BeepOn()
+{
+    digitalWrite(PIN_BEEP, HIGH);
+}
+
+void Beep::BeepOff()
+{
+    digitalWrite(PIN_BEEP, LOW);
 }

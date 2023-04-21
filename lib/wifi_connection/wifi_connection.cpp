@@ -18,14 +18,29 @@ void WifiConnection::Create(ParamManager* pm)
 {
     this->pm = pm;
 
-    preConnectionStatus = 0;
+    enable = 1;
     udpListening = 0;
+
+    pm->Bind_u8(0x10, &enable);
 }
 
 void WifiConnection::Init()
 {
+    if (!enable) {
+        return;
+    }
+
     WiFi.config(localIp, gatewayIp, subnet, primaryDns, secondaryDns);
     WiFi.begin("VVAILL", "channy161021");
+
+    uint32_t timeout = 0;
+    while (WiFi.status() != WL_CONNECTED) {
+        delay(50);
+        timeout += 50;
+        if (timeout > 15000) {
+            return;
+        }
+    }
 }
 
 void WifiConnection::Reset()
@@ -36,16 +51,7 @@ void WifiConnection::Reset()
 void WifiConnection::RealtimeCyclic()
 {
     if (WiFi.status() != WL_CONNECTED) {
-        // set led to 1Hz 50% blink
-        pm->Set_u8(0x210, 10);
-        pm->Set_u8(0x211, 50);
-        preConnectionStatus = 0;
         return;
-    }
-    if (!preConnectionStatus && WiFi.status() == WL_CONNECTED) {
-        // set led to always off
-        pm->Set_u8(0x211, 0);
-        preConnectionStatus = 1;
     }
 
     ParamAction newAction = {};

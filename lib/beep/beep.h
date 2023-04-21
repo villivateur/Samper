@@ -11,6 +11,8 @@ public:
     void Reset();
     void RealtimeCyclic();
     void NormalCyclic();
+    void BeepOn();
+    void BeepOff();
 
 private:
     uint8_t frequecy; // 0.1Hz
