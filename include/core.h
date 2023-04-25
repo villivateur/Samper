@@ -3,6 +3,7 @@
 #include <Arduino.h>
 #include "param_manager.h"
 #include "device.h"
+#include "service.h"
 
 class Core
 {
@@ -17,6 +18,7 @@ public:
 
 private:
     ParamManager pm;
+    SamperService service = SamperService(&pm);
     Device* devices[16];
     uint32_t deviceCount;
 };

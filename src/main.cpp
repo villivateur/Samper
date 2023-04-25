@@ -7,6 +7,7 @@
 #include "wifi_connection.h"
 #include "beep.h"
 #include "headlight.h"
+#include "battery_monitor.h"
 
 
 Core core;
@@ -15,6 +16,7 @@ WifiConnection network;
 StatusLed statusLed;
 Beep beep;
 Headlight headlight;
+BatteryMonitor batteryMonitor;
 
 
 void RealtimeTask(void* p);
@@ -29,6 +31,7 @@ void setup()
     core.AddDevice(&statusLed);
     core.AddDevice(&beep);
     core.AddDevice(&headlight);
+    core.AddDevice(&batteryMonitor);
     core.InitDevices();
 
     for (uint32_t i = 0; i < 10; i++) {

@@ -28,3 +28,8 @@
 ## Head light
 
 - 0x220: On/Off
+
+## Battery monitor
+
+- 0x300: ADC voltage(mV)
+- 0x301: Battery voltage(mV)

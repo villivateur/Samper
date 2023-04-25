@@ -24,6 +24,7 @@ void Core::InitDevices()
 
 void Core::RealtimeCyclic()
 {
+    service.RealtimeCyclic();
     for (uint32_t i = 0; i < deviceCount; i++) {
         devices[i]->RealtimeCyclic();
     }
@@ -31,6 +32,7 @@ void Core::RealtimeCyclic()
 
 void Core::NormalCyclic()
 {
+    service.NormalCyclic();
     for (uint32_t i = 0; i < deviceCount; i++) {
         devices[i]->NormalCyclic();
     }
