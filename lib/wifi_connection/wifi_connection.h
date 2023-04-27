@@ -23,6 +23,4 @@ private:
     uint8_t enable;
     uint8_t udpListening;
     uint8_t connected;
-    IPAddress remoteIp;
-    uint16_t remotePort;
 };

@@ -6,13 +6,15 @@
 #include "string_utils.h"
 
 
-IPAddress localIp(192, 168, 2, 50);
-IPAddress gatewayIp(192, 168, 2, 1);
-IPAddress subnet(255, 255, 255, 0);
-IPAddress primaryDns(223, 5, 5, 5);
-IPAddress secondaryDns(8, 8, 4, 4);
-WiFiUDP udp;
+static IPAddress localIp(192, 168, 2, 50);
+static IPAddress gatewayIp(192, 168, 2, 1);
+static IPAddress subnet(255, 255, 255, 0);
+static IPAddress primaryDns(223, 5, 5, 5);
+static IPAddress secondaryDns(8, 8, 4, 4);
+static WiFiUDP udp;
 
+static QueueHandle_t normal2realtimeQueue;
+static QueueHandle_t realtime2normalQueue;
 
 void WifiConnection::Create(ParamManager* pm)
 {
@@ -29,6 +31,9 @@ void WifiConnection::Init()
     if (!enable) {
         return;
     }
+
+    normal2realtimeQueue = xQueueCreate(32, sizeof(ParamAction));
+    realtime2normalQueue = xQueueCreate(32, sizeof(ParamAction));
 
     WiFi.config(localIp, gatewayIp, subnet, primaryDns, secondaryDns);
     WiFi.begin("VVAILL", "channy161021");
@@ -57,7 +62,7 @@ void WifiConnection::RealtimeCyclic()
     }
 
     ParamAction reqeust = {};
-    while (xQueueReceive(pm->paramDownloadQueue, &reqeust, 0)) {
+    while (xQueueReceive(normal2realtimeQueue, &reqeust, 0)) {
         switch (reqeust.cmd) {
             case ParamCommand::WRITE_CMD: {
                 switch (pm->GetType(reqeust.index)) {
@@ -76,7 +81,7 @@ void WifiConnection::RealtimeCyclic()
                 ParamAction response;
                 response.cmd = ParamCommand::WRITE_RESP;
                 response.index = reqeust.index;
-                xQueueSend(pm->paramUploadQueue, &response, 0);
+                xQueueSend(realtime2normalQueue, &response, 0);
             } break;
             case ParamCommand::READ_CMD: {
                 ParamAction response;
@@ -95,7 +100,7 @@ void WifiConnection::RealtimeCyclic()
                     default:
                         break;
                 }
-                xQueueSend(pm->paramUploadQueue, &response, 0);
+                xQueueSend(realtime2normalQueue, &response, 0);
             } break;
             default:
                 break;
@@ -116,9 +121,11 @@ void WifiConnection::NormalCyclic()
     ParamAction response;
 
     if (connected) {
-        while (xQueueReceive(pm->paramUploadQueue, &response, 0)) {
+        if (xQueuePeek(realtime2normalQueue, &response, 0)) {
             udp.beginPacket(udp.remoteIP(), udp.remotePort());
-            udp.println(BuildString(&response).c_str());
+            while (xQueueReceive(realtime2normalQueue, &response, 0)) {
+                udp.print(BuildString(&response).c_str());
+            }
             udp.endPacket();
         }
     }
@@ -188,7 +195,7 @@ void WifiConnection::ParseLine(std::string line)
         // TODO
         return;
     }
-    xQueueSend(pm->paramDownloadQueue, &newAction, portMAX_DELAY);
+    xQueueSend(normal2realtimeQueue, &newAction, portMAX_DELAY);
 }
 
 std::string WifiConnection::BuildString(ParamAction* action)

@@ -8,6 +8,7 @@
 #include "beep.h"
 #include "headlight.h"
 #include "battery_monitor.h"
+#include "samper_i2c.h"
 
 
 Core core;
@@ -17,6 +18,7 @@ StatusLed statusLed;
 Beep beep;
 Headlight headlight;
 BatteryMonitor batteryMonitor;
+SamperI2c myi2c;
 
 
 void RealtimeTask(void* p);
@@ -27,6 +29,7 @@ void setup()
     
     core.Init();
     core.AddDevice(&network);
+    core.AddDevice(&myi2c);
     core.AddDevice(&motor);
     core.AddDevice(&statusLed);
     core.AddDevice(&beep);

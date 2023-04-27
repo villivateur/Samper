@@ -12,9 +12,6 @@ static ParamInfo paramMap[0x1000];
 void ParamManager::Init()
 {
     memset(paramMap, 0, sizeof(paramMap));
-
-    paramDownloadQueue = xQueueCreate(32, sizeof(ParamAction));
-    paramUploadQueue = xQueueCreate(32, sizeof(ParamAction));
 }
 
 void ParamManager::Bind_u8(uint16_t index, uint8_t* buf)

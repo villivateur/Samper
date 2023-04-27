@@ -46,8 +46,5 @@ public:
 
     ParamType GetType(uint16_t index);
 
-    QueueHandle_t paramDownloadQueue;
-    QueueHandle_t paramUploadQueue;
-
 private:
 };
