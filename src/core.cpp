@@ -4,36 +4,33 @@
 void Core::Init()
 {
     pm.Init();
-    memset(devices, 0, sizeof(devices));
-    deviceCount = 0;
 }
 
 void Core::AddDevice(Device* device)
 {
-    devices[deviceCount] = device;
-    deviceCount++;
+    devices.push_back(device);
     device->Create(&pm);
 }
 
 void Core::InitDevices()
 {
-    for (uint32_t i = 0; i < deviceCount; i++) {
-        devices[i]->Init();
+    for (auto device : devices) {
+        device->Init();
     }
 }
 
 void Core::RealtimeCyclic()
 {
     service.RealtimeCyclic();
-    for (uint32_t i = 0; i < deviceCount; i++) {
-        devices[i]->RealtimeCyclic();
+    for (auto device : devices) {
+        device->RealtimeCyclic();
     }
 }
 
 void Core::NormalCyclic()
 {
     service.NormalCyclic();
-    for (uint32_t i = 0; i < deviceCount; i++) {
-        devices[i]->NormalCyclic();
+    for (auto device : devices) {
+        device->NormalCyclic();
     }
 }

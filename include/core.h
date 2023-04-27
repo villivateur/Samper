@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Arduino.h>
+#include <vector>
 #include "param_manager.h"
 #include "device.h"
 #include "service.h"
@@ -19,6 +20,5 @@ public:
 private:
     ParamManager pm;
     SamperService service = SamperService(&pm);
-    Device* devices[16];
-    uint32_t deviceCount;
+    std::vector<Device*> devices;
 };
