@@ -26,12 +26,6 @@ void ParamManager::Bind_i32(uint16_t index, int32_t* buf)
     paramMap[index].type = ParamType::INT32;
 }
 
-void ParamManager::Bind_u32(uint16_t index, uint32_t* buf)
-{
-    paramMap[index].buf = buf;
-    paramMap[index].type = ParamType::UINT32;
-}
-
 void ParamManager::Set_u8(uint16_t index, uint8_t val)
 {
     if (GetType(index) != ParamType::UINT8) {
@@ -48,14 +42,6 @@ void ParamManager::Set_i32(uint16_t index, int32_t val)
     *(int32_t*)(paramMap[index].buf) = val;
 }
 
-void ParamManager::Set_u32(uint16_t index, uint32_t val)
-{
-    if (GetType(index) != ParamType::UINT32) {
-        return;
-    }
-    *(uint32_t*)(paramMap[index].buf) = val;
-}
-
 uint8_t ParamManager::Get_u8(uint16_t index)
 {
     if (GetType(index) != ParamType::UINT8) {
@@ -70,14 +56,6 @@ int32_t ParamManager::Get_i32(uint16_t index)
         return 0;
     }
     return *(int32_t*)(paramMap[index].buf);
-}
-
-uint32_t ParamManager::Get_u32(uint16_t index)
-{
-    if (GetType(index) != ParamType::UINT32) {
-        return 0;
-    }
-    return *(uint32_t*)(paramMap[index].buf);
 }
 
 ParamType ParamManager::GetType(uint16_t index)

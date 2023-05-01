@@ -65,20 +65,19 @@ void WifiConnection::RealtimeCyclic()
     while (xQueueReceive(normal2realtimeQueue, &reqeust, 0)) {
         switch (reqeust.cmd) {
             case ParamCommand::WRITE_CMD: {
+                ParamAction response;
                 switch (pm->GetType(reqeust.index)) {
                     case ParamType::UINT8: {
                         pm->Set_u8(reqeust.index, *(uint8_t*)(reqeust.buf));
+                        *(uint8_t*)response.buf = pm->Get_u8(reqeust.index);
                     } break;
                     case ParamType::INT32: {
                         pm->Set_i32(reqeust.index, *(int32_t*)(reqeust.buf));
-                    } break;
-                    case ParamType::UINT32: {
-                        pm->Set_u32(reqeust.index, *(uint32_t*)(reqeust.buf));
+                        *(int32_t*)response.buf = pm->Get_i32(reqeust.index);
                     } break;
                     default:
                         break;
                 }
-                ParamAction response;
                 response.cmd = ParamCommand::WRITE_RESP;
                 response.index = reqeust.index;
                 xQueueSend(realtime2normalQueue, &response, 0);
@@ -93,9 +92,6 @@ void WifiConnection::RealtimeCyclic()
                     } break;
                     case ParamType::INT32: {
                         *(int32_t*)response.buf = pm->Get_i32(reqeust.index);
-                    } break;
-                    case ParamType::UINT32: {
-                        *(uint32_t*)response.buf = pm->Get_u32(reqeust.index);
                     } break;
                     default:
                         break;
@@ -180,10 +176,6 @@ void WifiConnection::ParseLine(std::string line)
                 int32_t value = std::stol(oprands[2], nullptr, 10);
                 *(int32_t*)(newAction.buf) = value;
             } break;
-            case ParamType::UINT32: {
-                uint32_t value = std::stoul(oprands[2], nullptr, 10);
-                *(uint32_t*)(newAction.buf) = value;
-            } break;
             default:
                 return;
         }
@@ -215,9 +207,6 @@ std::string WifiConnection::BuildString(ParamAction* action)
         break;
     case ParamType::INT32:
         result += std::to_string(*(int32_t*)action->buf);
-        break;
-    case ParamType::UINT32:
-        result += std::to_string(*(uint32_t*)action->buf);
         break;
     default:
         break;

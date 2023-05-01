@@ -13,6 +13,7 @@ public:
     void NormalCyclic();
 
 private:
-    uint32_t adcVoltage;
-    uint32_t batteryVoltage;
+    int32_t adcVoltage;
+    int32_t batteryVoltage;
+    int32_t lowVoltageThr;
 };

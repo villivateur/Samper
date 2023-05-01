@@ -23,8 +23,9 @@ void SamperService::MonitorBattery()
 
     static uint32_t lowVoltageCount = 0;
 
-    uint32_t voltage = pm->Get_u32(0x301);
-    if (voltage < 9500) {
+    int32_t voltage = pm->Get_i32(0x301);
+    int32_t lowVoltageThr = pm->Get_i32(0x302);
+    if (voltage < lowVoltageThr) {
         lowVoltageCount++;
     } else {
         lowVoltageCount = 0;

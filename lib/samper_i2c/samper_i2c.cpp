@@ -22,7 +22,9 @@ void OnI2cReceive(int len)
 {
     while (Wire.available()) {
         char ch = (char)Wire.read();
-        xQueueSend(driver2appQueue, &ch, portMAX_DELAY);
+        if (ch != 0x00) {
+            xQueueSend(driver2appQueue, &ch, portMAX_DELAY);
+        }
     }
 }
 
@@ -60,9 +62,6 @@ void SamperI2c::RealtimeCyclic()
                     case ParamType::INT32: {
                         pm->Set_i32(reqeust.index, *(int32_t*)(reqeust.buf));
                     } break;
-                    case ParamType::UINT32: {
-                        pm->Set_u32(reqeust.index, *(uint32_t*)(reqeust.buf));
-                    } break;
                     default:
                         break;
                 }
@@ -81,9 +80,6 @@ void SamperI2c::RealtimeCyclic()
                     } break;
                     case ParamType::INT32: {
                         *(int32_t*)response.buf = pm->Get_i32(reqeust.index);
-                    } break;
-                    case ParamType::UINT32: {
-                        *(uint32_t*)response.buf = pm->Get_u32(reqeust.index);
                     } break;
                     default:
                         break;
@@ -112,18 +108,27 @@ void SamperI2c::NormalCyclic()
     while (xQueueReceive(driver2appQueue, &tempChar, 0)) {
         package += tempChar;
     }
-    if (package.length() > 0){
+    if (package.length() > 0) {
         ParsePackage(&package);
     }
 }
 
 void SamperI2c::ParsePackage(std::string* package)
 {
-    trim(*package);
     bool packageNotEnd = false;
-    if (package->back() != ';') {
+
+    // Get last no-space char
+    char lastChar;
+    uint32_t i = package->length() - 1;
+    lastChar = (*package)[i];
+    while (std::isspace(lastChar) && (i != 0)) {
+        i--;
+        lastChar = (*package)[i];
+    }
+    if (lastChar != ';') {
         packageNotEnd = true;
     }
+
     std::vector<std::string> lines;
     std::istringstream f(*package);
     std::string s;    
@@ -167,10 +172,6 @@ void SamperI2c::ParseLine(std::string line)
                 int32_t value = std::stol(oprands[2], nullptr, 10);
                 *(int32_t*)(newAction.buf) = value;
             } break;
-            case ParamType::UINT32: {
-                uint32_t value = std::stoul(oprands[2], nullptr, 10);
-                *(uint32_t*)(newAction.buf) = value;
-            } break;
             default:
                 return;
         }
@@ -202,9 +203,6 @@ std::string SamperI2c::BuildString(ParamAction* action)
         break;
     case ParamType::INT32:
         result += std::to_string(*(int32_t*)action->buf);
-        break;
-    case ParamType::UINT32:
-        result += std::to_string(*(uint32_t*)action->buf);
         break;
     default:
         break;
