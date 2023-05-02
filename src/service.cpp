@@ -10,16 +10,16 @@ SamperService::SamperService(ParamManager* pm)
 
 void SamperService::RealtimeCyclic()
 {
+    MonitorBattery();
 }
 
 void SamperService::NormalCyclic()
 {
-    MonitorBattery();
 }
 
 void SamperService::MonitorBattery()
 {
-    WAIT_RUN_PERIOD_NORMAL_CYCLE(2000);
+    WAIT_RUN_PERIOD_REALTIME_CYCLE(2000);
 
     static uint32_t lowVoltageCount = 0;
 
